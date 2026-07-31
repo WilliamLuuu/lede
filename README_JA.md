@@ -1,22 +1,14 @@
-# OpenWrt とパッケージの Lean の git ソースへようこそ
+# LEDE / OpenWrt ソースリポジトリ
+
+> このプロジェクトは Lean 氏が作成した [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede) を基にしています。
 
 I18N: [English](README_EN.md) | [简体中文](README.md) | [日本語](README_JA.md)
-
-## 公式チャンネル
-
-ディスカッションや共有したい技術的な質問がある場合は、以下のチャンネルにお気軽にご参加ください:
-
-1. QQ グループ: *OpenWRT ファームウェア技術研究グループ*、グループ番号は `891659613` です。
-グループに参加する: [リンク](https://jq.qq.com/?_wv=1027&k=XL8SK5aC "Op固件技术研究群")。
-    - [クリックして QQ クライアントをダウンロードする](https://im.qq.com/pcqq)。
-
-2. Telegram グループ: *OpenWRT ファームウェア技術研究グループ*。グループに参加する: [リンク](https://t.me/JhKgAA6Hx1 "OP 编译官方大群")。
 
 ## 注意
 
 1. **OpenWRT を決して `root` としてコンパイルしないこと**
 2. 中国本土にお住まいの方は、ぜひ **REAL** インターネットをご覧ください。
-3. デフォルトのログイン IP は `192.168.1.1` で、パスワードは `password` です。
+3. デフォルトのログイン IP は `192.168.3.1` で、パスワードは `password` です。
 
 ## コンパイル方法
 
@@ -36,10 +28,10 @@ I18N: [English](README_EN.md) | [简体中文](README.md) | [日本語](README_J
    uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
    ```
 
-3. ソースコードをクローンし、`feeds` を更新し、設定する:
+3. ソースコードをクローンし、`feeds` を更新して設定する:
 
    ```bash
-   git clone https://github.com/coolsnowwolf/lede
+   git clone https://github.com/WilliamLuuu/lede.git lede
    cd lede
    ./scripts/feeds update -a
    ./scripts/feeds install -a
@@ -54,11 +46,7 @@ I18N: [English](README_EN.md) | [简体中文](README.md) | [日本語](README_J
    make V=s -j1
    ```
 
-これらのコマンドは、ソースコードを正常にコンパイルするためのものです。
-R23 のソースコードは IPK を含めてすべて含まれています。
-
-このソースコードはご自由にお使いいただけますが、再配布の際はこの GitHub リポジトリをリンクしてください。
-ご協力ありがとうございました！
+ビルド結果は、ホスト環境、選択したターゲット、パッケージ設定によって異なります。
 
 リビルド:
 
@@ -102,13 +90,13 @@ WSL ディストリビューションにマウントされた NTFS フォーマ�
 Build dependency: OpenWrt can only be built on a case-sensitive filesystem
 ```
 
-単純な解決策は、`git clone` の前に大文字小文字を区別してリポジトリ用のディレクトリを作成することです:
+単純な解決策は、`git clone` の前に大文字と小文字を区別する `lede` ディレクトリを作成することです:
 
 ```powershell
 # 管理者としてターミナルを開く
-PS > fsutil.exe file setCaseSensitiveInfo <your_local_lede_path> enable
-# 大文字と小文字を区別して、このリポジトリを <your_local_lede_path> ディレクトリにクローンする
-PS > git clone git@github.com:coolsnowwolf/lede.git <your_local_lede_path>
+PS > New-Item -ItemType Directory -Path lede
+PS > fsutil.exe file setCaseSensitiveInfo lede enable
+PS > git clone https://github.com/WilliamLuuu/lede.git lede
 ```
 
 > すでに `git clone` されたディレクトリでは、`fsutil.exe` は有効になりません。
@@ -160,32 +148,10 @@ PS > git clone git@github.com:coolsnowwolf/lede.git <your_local_lede_path>
 
 5. シェルプロファイル `source ~/.bashrc && bash` を再読み込みすれば、Linux のように普通にコンパイルできます。
 
-## 宣言
+## セキュリティ
 
-1. このソースコードには、HTTPS トラフィックを監視／キャプチャできるバックドアやクローズドソースアプリケーションは含まれていません。SSL セキュリティはサイバーセキュリティの最後の城です。安全性はファームウェアがすべきことです。
-2. OpenWRT の開発を学びたいが、何から始めたらいいかわからないですか？自己学習のモチベーションが上がらない？基礎知識が足りない？ズオ氏の初心者 OpenWRT トレーニングコースで一緒に OpenWRT 開発を学びましょう。お申し込みは[こちら](http://forgotfun.org/2018/04/openwrt-training-2018.html)をクリックしてください。
-3. QCA IPQ60xx オープンソースリポジトリ: <https://github.com/coolsnowwolf/openwrt-gl-ax1800>
-4. OpenWRT アーカイブリポジトリ: <https://github.com/coolsnowwolf/openwrt>
-
-## ソフトウェアルーター入門
-
-Yingku R2 - N95/N300 Mini Four-Network HomeLab Server
-
-(紹介ページ - Yingku Technology (support AliPay Huabei)):
-
-[先行販売リンク](https://item.taobao.com/item.htm?ft=t&id=719159813003)
-<div align="left">
-<a href="https://item.taobao.com/item.htm?ft=t&id=719159813003">
-  <img src="doc/r1.jpg" width = "600" alt="" align=center />
-</a>
-</div>
-<br>
+ソースには、HTTPS 通信を監視または傍受するバックドアやクローズドソースソフトウェアを含めるべきではありません。ビルドやインストールの前に、サードパーティ製パッケージの出所とコードを確認してください。
 
 ## 寄付
 
-このプロジェクトがあなたのお役に立てたのであれば、このプロジェクトの発展を支援するための寄付をご検討ください。
-
-<div align="left">
-  <img src="./doc/star.png" width = "400" alt="" align=center />
-</div>
-<br>
+[原作者への寄付方法を見る](https://github.com/coolsnowwolf/lede#寄付)

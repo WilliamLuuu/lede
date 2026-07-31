@@ -1,32 +1,14 @@
-# Welcome to Lean's git source of OpenWrt and packages
+# LEDE / OpenWrt Source Repository
+
+> This project is based on [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede), originally authored by Lean.
 
 I18N: [English](README_EN.md) | [简体中文](README.md) | [日本語](README_JA.md)
-
-## Official Channels
-
-If you have technical questions for discussion or sharing, feel free to join the following channels:
-
-1. QQ Group: *OpenWRT Firmware Technical Research Group*, Group Number is `891659613`.
-Join the group: [Link](https://jq.qq.com/?_wv=1027&k=XL8SK5aC "Op固件技术研究群").
-    - [Click to download QQ client](https://im.qq.com/pcqq).
-
-2. Telegram Group: *OpenWRT Firmware Technical Research Group*.
-Join the group: [Link](https://t.me/JhKgAA6Hx1 "OP 编译官方大群").
-
-## ArmSoM Sige Board Series Introduction
-
-ArmSoM-Sige Series: Your All-in-One Powerhouse for Soft Routing, SBCs, Mini Servers, and Home Automation.
-
-[ArmSoM Store](https://www.aliexpress.com/store/1102800175)
-
-Buy Link ：
-[![sige1-en](doc/sige-en.jpg)](https://aliexpress.com/item/3256807356692995.html)
 
 ## Notice
 
 1. **Never compile OpenWRT as `root`**
 2. If you are living in mainland China, please make sure you could visit the **REAL** Internet.
-3. Default login IP is `192.168.1.1`, password is `password`.
+3. Default login IP is `192.168.3.1`, password is `password`.
 
 ## How to Compile
 
@@ -49,7 +31,7 @@ Buy Link ：
 3. Clone the source code, update `feeds` and configure:
 
    ```bash
-   git clone https://github.com/coolsnowwolf/lede
+   git clone https://github.com/WilliamLuuu/lede.git lede
    cd lede
    ./scripts/feeds update -a
    ./scripts/feeds install -a
@@ -64,11 +46,7 @@ Buy Link ：
    make V=s -j1
    ```
 
-These commands are supposed to compile the source code successfully.
-All source code of R23 is included, including IPK.
-
-You can use this source code freely, but please link this GitHub repository when redistributing.
-Thank you for your cooperation!
+Build results depend on the host environment, selected target, and package configuration.
 
 Rebuild:
 
@@ -112,13 +90,13 @@ This will cause the following error when compiling in WSL/WSL2:
 Build dependency: OpenWrt can only be built on a case-sensitive filesystem
 ```
 
-A simple solution is to create a case-sensitive directory for the repository before `git clone`:
+A simple solution is to create a case-sensitive `lede` directory before `git clone`:
 
 ```powershell
 # Open a terminal as administrator
-PS > fsutil.exe file setCaseSensitiveInfo <your_local_lede_path> enable
-# Clone this repository to the case-sensitive directory <your_local_lede_path>
-PS > git clone git@github.com:coolsnowwolf/lede.git <your_local_lede_path>
+PS > New-Item -ItemType Directory -Path lede
+PS > fsutil.exe file setCaseSensitiveInfo lede enable
+PS > git clone https://github.com/WilliamLuuu/lede.git lede
 ```
 
 > For directories that have already been `git clone`, `fsutil.exe` will not take effect.
@@ -170,32 +148,10 @@ PS > git clone git@github.com:coolsnowwolf/lede.git <your_local_lede_path>
 
 5. Reload your shell profile `source ~/.bashrc && bash`, then you can compile normally like Linux.
 
-## Declaration
+## Security
 
-1. This source code doesn't contain any backdoors or closed source applications that can monitor/capture your HTTPS traffic. SSL security is the final castle of cyber security. Safety is what a firmware should do.
-2. Want to learn OpenWRT development but don't know how to start? Can't motivate yourself for self-learning? Do not have enough fundamental knowledge? Learn OpenWRT development with Mr. Zuo through his Beginner OpenWRT Training Course. Click [here](http://forgotfun.org/2018/04/openwrt-training-2018.html) to register.
-3. QCA IPQ60xx open source repository: <https://github.com/coolsnowwolf/openwrt-gl-ax1800>
-4. OpenWRT Archive repository: <https://github.com/coolsnowwolf/openwrt>
-
-## Introduction to Software Routers
-
-Yingku R2 - N95/N300 Mini Four-Network HomeLab Server
-
-(Introduction page - Yingku Technology (support AliPay Huabei)):
-
-[Pre-sale link](https://item.taobao.com/item.htm?ft=t&id=719159813003)
-<div align="left">
-<a href="https://item.taobao.com/item.htm?ft=t&id=719159813003">
-  <img src="doc/r1.jpg" width = "600" alt="" align=center />
-</a>
-</div>
-<br>
+The source should not contain backdoors or closed-source software that monitors or intercepts HTTPS traffic. Review third-party package sources and code before building or installing them.
 
 ## Donation
 
-If this project did helped you, please consider donating to support the development of this project.
-
-<div align="left">
-  <img src="./doc/star.png" width = "400" alt="" align=center />
-</div>
-<br>
+[See the original author's donation options](https://github.com/coolsnowwolf/lede#donation)

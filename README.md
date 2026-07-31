@@ -1,52 +1,16 @@
-# 欢迎来到 Lean 的 LEDE 源码仓库
+# LEDE / OpenWrt 源码仓库
+
+> 本项目基于 [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede)，原作者为 Lean。
 
 为国产龙芯 LOONGSON SoC loongarch64 / 飞腾 Phytium 腾锐 D2000 系列架构添加支持
 
 I18N: [English](README_EN.md) | [简体中文](README.md) | [日本語](README_JA.md)
 
-## 官方讨论群
-
-如有技术问题需要讨论或者交流，欢迎加入以下群：
-
-1. QQ 讨论群：Op 固件技术研究群，号码 891659613，加群链接：[点击加入](https://qm.qq.com/q/IMa6Yf2SgC "Op固件技术研究群")
-2. TG 讨论群：OP 编译官方大群，加群链接：[点击加入](https://t.me/JhKgAA6Hx1 "OP 编译官方大群")
-
-## 瑞莎网络计算 - 轻松打造你的网络边缘计算系统
-
-![radxa-netcompute-features](./doc/radxa.png)
-
-瑞莎网络计算系列覆盖从入门到高性能的边缘网关场景，从千兆到 2.5G，从四核到六核，全系列基于瑞芯微高可靠处理器，低功耗、稳定运行，适合 7×24 小时网络服务。
-
-| 产品型号  | E20C                    | E24C                    | E25                             | E52C                              | E54C                      |
-| -------- | ----------------------- | ----------------------- | ------------------------------- | --------------------------------- | ------------------------- |
-| 处理器    | 瑞芯微RK3528A（四核）     | 瑞芯微 RK3528A（四核）     | 瑞芯微 RK3568（四核）             | 瑞芯微 RK3582（六核）               | 瑞芯微 RK3582（六核）        |
-| 以太网    | 2x 千兆以太网            | 4x 千兆以太网              | 2x 2.5G 以太网                  | 2x 2.5G 以太网                     | 4x 千兆以太网               |
-| 适用场景  | 入门级软路由 / 家用网关    | 多口家庭路由 / IoT 网关     | 高速 2.5G 家庭 / 小型企业软路由    | 高性能 2.5G 路由 / 边缘计算 / VPN    | 多口网络控制器 / 企业网关     |
-
-- 多网口设计，为网络计算而生
-  - 提供 2 / 4 网口、千兆 / 2.5G 多种组合，灵活适配家用、宿舍、小型企业与 IoT 网络。
-- 一板多用，系统自由切换
-  - 支持 OpenWrt、Debian、Armbian 等多种系统，可应用于网关、轻量服务器或开发板等领域。
-- 稳定可靠，适合全天候运行
-  - 优秀的金属外壳散热设计 + 瑞芯微平台的低功耗特性，确保长时间满载仍能保持稳定。
-- 开发生态完善，轻松扩展功能
-  - 提供配套文档、源码与社区支持，方便开发者进行二次开发、插件扩展与自定义功能。
-
-## 了解更多
-
-- [官方文档](https://docs.radxa.com/e/e20c)
-
-- [官网介绍](https://radxa.com/products#NetworkComputer)
-
-- [瑞莎京东店铺](https://mall.jd.com/view_search-3967032-31323445-99-1-20-1.html)
-
-- [瑞莎淘宝店铺](https://radxa.taobao.com/category-1797203497.htm?spm=a1z10.1-c-s.0.0.eaee3a483AhQEE)
-
 ## 注意
 
 1. **不要用 root 用户进行编译**
 2. 国内用户编译前最好准备好梯子
-3. 默认登陆IP 192.168.1.1 密码 password
+3. 默认登录 IP 为 `192.168.3.1`，密码为 `password`
 
 ## 编译命令
 
@@ -69,7 +33,7 @@ I18N: [English](README_EN.md) | [简体中文](README.md) | [日本語](README_J
 3. 下载源代码，更新 feeds 并选择配置
 
    ```bash
-   git clone https://github.com/coolsnowwolf/lede
+   git clone https://github.com/WilliamLuuu/lede.git lede
    cd lede
    ./scripts/feeds update -a
    ./scripts/feeds install -a
@@ -84,9 +48,7 @@ I18N: [English](README_EN.md) | [简体中文](README.md) | [日本語](README_J
    make V=s -j1
    ```
 
-本套代码保证肯定可以编译成功。里面包括了 R24 所有源代码，包括 IPK 的。
-
-你可以自由使用，但源码编译二次发布请注明我的 GitHub 仓库链接。谢谢合作！
+构建结果取决于编译环境、所选目标和软件包配置。
 
 二次编译：
 
@@ -124,13 +86,13 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 Build dependency: OpenWrt can only be built on a case-sensitive filesystem
 ```
 
-一个比较简洁的解决方法是，在 `git clone` 前先创建 Repository 目录，并为其启用大小写敏感：
+一个比较简洁的解决方法是，在 `git clone` 前先创建 `lede` 目录，并为其启用大小写敏感：
 
 ```powershell
 # 以管理员身份打开终端
-PS > fsutil.exe file setCaseSensitiveInfo <your_local_lede_path> enable
-# 将本项目 git clone 到开启了大小写敏感的目录 <your_local_lede_path> 中
-PS > git clone https://github.com/coolsnowwolf/lede <your_local_lede_path>
+PS > New-Item -ItemType Directory -Path lede
+PS > fsutil.exe file setCaseSensitiveInfo lede enable
+PS > git clone https://github.com/WilliamLuuu/lede.git lede
 ```
 
 > 对已经 `git clone` 完成的项目目录执行 `fsutil.exe` 命令无法生效，大小写敏感只对新增的文件变更有效。
@@ -181,19 +143,10 @@ PS > git clone https://github.com/coolsnowwolf/lede <your_local_lede_path>
 
 5. 重新加载一下 shell 启动文件 `source ~/.bashrc`，然后输入 `bash` 进入 bash shell，就可以和 Linux 一样正常编译了
 
-## 特别提示
+## 安全说明
 
-1. 源代码中绝不含任何后门和可以监控或者劫持你的 HTTPS 的闭源软件， SSL 安全是互联网最后的壁垒，安全干净才是固件应该做到的。
+源代码不应包含监控或劫持 HTTPS 流量的后门及闭源软件。编译和安装第三方软件包前，请自行审查其来源与代码。
 
-2. 想学习 OpenWrt 开发，但是摸不着门道？自学没毅力？基础太差？怕太难学不会？跟着佐大学 OpenWrt 开发入门培训班助你能学有所成
-报名地址：[点击报名](http://forgotfun.org/2018/04/openwrt-training-2018.html "报名")
+## 捐赠
 
-3. QCA IPQ60xx 开源仓库地址：<https://github.com/coolsnowwolf/openwrt-gl-ax1800>
-
-4. 存档版本仓库地址：<https://github.com/coolsnowwolf/openwrt>
-
-## 捐贈
-
-如果你觉得此项目对你有帮助，可以捐助我们，以鼓励项目能持续发展，更加完善
-
- ![star](doc/star.png)
+[查看原作者的捐赠方式](https://github.com/coolsnowwolf/lede#捐贈)

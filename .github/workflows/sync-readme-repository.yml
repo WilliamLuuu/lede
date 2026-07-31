@@ -1,0 +1,64 @@
+name: Sync README repository URLs
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-readme-repository
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Update clone URLs
+        env:
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          clone_url = f"https://github.com/{os.environ['REPOSITORY']}.git"
+          clone_command = re.compile(
+              r"(?m)^(\s*(?:PS > )?git clone )https://github\.com/\S+?(\s+lede\s*)$"
+          )
+
+          for filename in ("README.md", "README_EN.md", "README_JA.md"):
+              path = Path(filename)
+              content = path.read_text(encoding="utf-8")
+              updated, count = clone_command.subn(
+                  lambda match: f"{match.group(1)}{clone_url}{match.group(2)}",
+                  content,
+              )
+
+              if count != 2:
+                  raise SystemExit(f"{filename}: expected 2 clone commands, found {count}")
+
+              if updated != content:
+                  path.write_text(updated, encoding="utf-8")
+          PY
+
+      - name: Commit updated URLs
+        run: |
+          if git diff --quiet -- README.md README_EN.md README_JA.md; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md README_EN.md README_JA.md
+          git commit -m "docs: sync repository clone URLs [skip ci]"
+          git push

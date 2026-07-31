@@ -3,6 +3,7 @@ use Getopt::Std;
 use FindBin;
 use Cwd;
 use lib "$FindBin::Bin";
+use FeedOverlay qw(update_git_overlay);
 use metadata;
 use warnings;
 use strict;
@@ -35,6 +36,7 @@ my %installed;
 my %installed_pkg;
 my %installed_targets;
 my %feed_cache;
+my @feed_overlays;
 
 my $feed_package = {};
 my $feed_src = {};
@@ -60,10 +62,6 @@ sub parse_file($$) {
 			die "Syntax error in $fname, line $line\n";
 		}
 
-		if ($existing->{$name}++) {
-			die "Duplicate feed name '$name' in '$fname' line: $line\n";
-		}
-
 		my @src = defined($urls) ? split /\s+/, $urls : ();
 		push @src, '' if @src == 0;
 
@@ -80,6 +78,24 @@ sub parse_file($$) {
 			next;
 		}
 
+		if ($type eq "git-overlay") {
+			@src == 3 or
+			    die "Git overlay in $fname line $line requires: target-feed destination source-url source-directory\n";
+
+			my ($destination, $source_url, $source_directory) = @src;
+			foreach my $path ($destination, $source_directory) {
+				$path !~ m!^/! && $path !~ m!(?:^|/)\.\.(?:/|$)! or
+				    die "Git overlay in $fname line $line contains an unsafe path '$path'\n";
+			}
+
+			push @feed_overlays, [$name, $destination, $source_url, $source_directory];
+			next;
+		}
+
+		if ($existing->{$name}++) {
+			die "Duplicate feed name '$name' in '$fname' line: $line\n";
+		}
+
 		push @feeds, ["src-$type", $name, \@src, \%flags];
 	}
 	close $fh;
@@ -91,6 +107,15 @@ sub parse_config() {
 	parse_file("feeds.conf", \%name) or
 	    parse_file("feeds.conf.default", \%name)  or
 	    die "Unable to open feeds configuration";
+
+	my %destination;
+	foreach my $overlay (@feed_overlays) {
+		my ($feed, $path) = @$overlay;
+		$name{$feed} or
+		    die "Git overlay targets undefined feed '$feed'\n";
+		$destination{"$feed/$path"}++ and
+		    die "Duplicate git overlay destination '$feed/$path'\n";
+	}
 }
 
 sub update_location($$)
@@ -839,7 +864,19 @@ sub update {
 		my ($type, $name, $src) = @$feed;
 		next unless $#ARGV == -1 or $opts{a} or $argv_feeds{$name};
 		if (not $opts{i}) {
-			update_feed($type, $name, $src, $opts{f}) == 0 or $failed=1;
+			if (update_feed($type, $name, $src, $opts{f}) == 0) {
+				foreach my $overlay (@feed_overlays) {
+					next unless $overlay->[0] eq $name;
+					update_git_overlay(
+						$overlay->[0],
+						$overlay->[1],
+						$overlay->[2],
+						$overlay->[3]
+					) == 0 or $failed=1;
+				}
+			} else {
+				$failed=1;
+			}
 		}
 		push @index_feeds, $name;
 	}
