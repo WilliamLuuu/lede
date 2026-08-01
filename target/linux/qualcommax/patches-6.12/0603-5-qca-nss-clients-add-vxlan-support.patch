@@ -51,7 +51,7 @@
 +
 +	hash_index = fdb_head_index(vxlan, mac, vni);
 +	spin_lock_bh(&vxlan->hash_lock[hash_index]);
-+	vxlan_find_mac(vxlan, mac, vni);
++	vxlan_find_mac_tx(vxlan, mac, vni);
 +	spin_unlock_bh(&vxlan->hash_lock[hash_index]);
 +}
 +EXPORT_SYMBOL(vxlan_fdb_update_mac);
