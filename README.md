@@ -58,6 +58,7 @@ cd lede
 git pull
 ./scripts/feeds update -a
 ./scripts/feeds install -a
+./feeds-patches/apply.sh
 make defconfig
 make download -j8
 make V=s -j$(nproc)
