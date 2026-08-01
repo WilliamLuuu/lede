@@ -1,0 +1,24 @@
+diff -ruN a/ext/SDBM_File/sdbm.c b/ext/SDBM_File/sdbm.c
+--- a/ext/SDBM_File/sdbm.c	2018-11-02 06:07:49.000000000 +0800
++++ b/ext/SDBM_File/sdbm.c	2026-08-01 23:18:27.433079230 +0800
+@@ -35,8 +35,6 @@
+ extern "C" {
+ #endif
+ 
+-extern Malloc_t malloc(MEM_SIZE);
+-extern Free_t free(Malloc_t);
+ 
+ #ifdef __cplusplus
+ }
+diff -ruN a/ext/SDBM_File/SDBM_File.xs b/ext/SDBM_File/SDBM_File.xs
+--- a/ext/SDBM_File/SDBM_File.xs	2018-03-01 20:12:30.000000000 +0800
++++ b/ext/SDBM_File/SDBM_File.xs	2026-08-01 23:18:36.097029875 +0800
+@@ -69,7 +69,7 @@
+ 		if (db->filter[i])
+ 		    SvREFCNT_dec_NN(db->filter[i]);
+ 	    } while (i-- > 0);
+-	    safefree(db) ;
++	    Safefree(db) ;
+ 	}
+ 
+ datum_value

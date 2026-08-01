@@ -1,0 +1,12 @@
+diff -ruN a/lib/replace/replace.c b/lib/replace/replace.c
+--- a/lib/replace/replace.c	2026-08-01 23:56:55.117063660 +0800
++++ b/lib/replace/replace.c	2026-08-01 23:56:55.117063660 +0800
+@@ -970,7 +970,7 @@
+ 	}
+ 
+ #if defined(HAVE_MEMSET_EXPLICIT)
+-	memset_explicit(dest, destsz, ch, count);
++	memset_explicit(dest, ch, count);
+ #else /* HAVE_MEMSET_EXPLICIT */
+ 	memset(dest, ch, count);
+ # if defined(HAVE_GCC_VOLATILE_MEMORY_PROTECTION)
